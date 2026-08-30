@@ -1001,88 +1001,220 @@ a:focus-visible {
   width: 7px;
 }
 
-.radio-display {
-  aspect-ratio: 16 / 9;
-  background: radial-gradient(circle, rgba(116, 16, 29, 0.62), #050405 68%);
+.vinyl-stage {
+  --record-size: clamp(190px, 20vw, 240px);
+  background:
+    linear-gradient(90deg, rgba(243, 234, 223, 0.035) 1px, transparent 1px),
+    radial-gradient(circle at 78% 48%, rgba(116, 16, 29, 0.68), #050405 58%);
+  background-size: 34px 100%, auto;
   border: 1px solid rgba(243, 234, 223, 0.12);
+  height: calc(var(--record-size) + 28px);
   margin: 1.4rem 0 0;
   overflow: hidden;
   position: relative;
 }
 
-.radio-display iframe {
-  border: 0;
-  height: 100%;
-  inset: 0;
-  position: absolute;
-  width: 100%;
-}
-
-.radio-idle {
-  align-items: center;
+.vinyl-sleeve {
+  background:
+    linear-gradient(145deg, transparent 0 43%, rgba(234, 81, 71, 0.13) 43.5% 44%, transparent 44.5%),
+    linear-gradient(160deg, #74101d, #1a070b 72%);
+  border: 1px solid rgba(243, 234, 223, 0.2);
+  bottom: 14px;
+  box-shadow: 18px 0 34px rgba(0, 0, 0, 0.54);
   display: flex;
-  inset: 0;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: space-between;
+  left: 14px;
+  overflow: hidden;
+  padding: 1.1rem;
   position: absolute;
+  top: 14px;
+  transition: transform 620ms cubic-bezier(.18,.8,.2,1);
+  width: 53%;
+  z-index: 3;
 }
 
-.radio-orbit {
-  animation: orbit 9s linear infinite;
-  border: 1px solid rgba(243, 234, 223, 0.32);
+.vinyl-sleeve::after {
+  border: 1px solid rgba(230, 166, 66, 0.34);
   border-radius: 50%;
-  height: 50%;
+  content: "";
+  height: 170px;
   position: absolute;
-  width: 28%;
+  right: -86px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 170px;
 }
 
-.radio-orbit::before,
-.radio-orbit::after {
-  border: 1px solid rgba(234, 81, 71, 0.45);
+.vinyl-sleeve span,
+.vinyl-sleeve i {
+  color: var(--saffron);
+  font-size: 0.52rem;
+  font-style: normal;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.vinyl-sleeve strong {
+  color: var(--ivory);
+  font-family: var(--serif);
+  font-size: clamp(1.65rem, 3.4vw, 2.75rem);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  line-height: 0.78;
+  position: relative;
+  z-index: 1;
+}
+
+.vinyl-trigger {
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  height: var(--record-size);
+  padding: 0;
+  position: absolute;
+  right: calc(var(--record-size) * 0.43);
+  top: 14px;
+  transition: right 620ms cubic-bezier(.18,.8,.2,1), filter 220ms ease;
+  width: var(--record-size);
+  z-index: 2;
+}
+
+.vinyl-stage:hover .vinyl-trigger,
+.vinyl-stage:focus-within .vinyl-trigger {
+  right: 10px;
+}
+
+.vinyl-stage:hover .vinyl-sleeve,
+.vinyl-stage:focus-within .vinyl-sleeve {
+  transform: translateX(-9%);
+}
+
+.vinyl-trigger:focus-visible {
+  outline: 2px solid var(--saffron);
+  outline-offset: 4px;
+}
+
+.vinyl-trigger:disabled {
+  cursor: wait;
+  filter: grayscale(0.65) brightness(0.72);
+}
+
+.vinyl-record,
+.vinyl-grooves,
+.vinyl-label {
+  border-radius: 50%;
+  display: block;
+  position: absolute;
+}
+
+.vinyl-record {
+  background:
+    repeating-radial-gradient(circle, transparent 0 4px, rgba(255, 255, 255, 0.055) 5px 6px),
+    conic-gradient(from 30deg, #080808, #242122, #070707, #312b2c, #080808, #211e1f, #080808);
+  box-shadow: -12px 18px 34px rgba(0, 0, 0, 0.55);
+  inset: 0;
+}
+
+.vinyl-record::after {
+  background: linear-gradient(115deg, transparent 28%, rgba(255, 255, 255, 0.14) 44%, transparent 58%);
   border-radius: inherit;
   content: "";
-  inset: 17%;
+  inset: 0;
   position: absolute;
 }
 
-.radio-orbit::after {
-  background: var(--oxblood);
-  border: 0;
-  inset: 38%;
+.vinyl-grooves {
+  border: 1px solid rgba(243, 234, 223, 0.16);
+  inset: 12%;
 }
 
-.radio-orbit i {
-  background: var(--saffron);
+.vinyl-grooves::before,
+.vinyl-grooves::after {
+  border: 1px solid rgba(243, 234, 223, 0.1);
+  border-radius: inherit;
+  content: "";
+  position: absolute;
+}
+
+.vinyl-grooves::before { inset: 12%; }
+.vinyl-grooves::after { inset: 25%; }
+
+.vinyl-label {
+  background: radial-gradient(circle, #080708 0 8%, var(--saffron) 9% 12%, #8e1324 13% 62%, #3a0911 63%);
+  box-shadow: 0 0 0 1px rgba(243, 234, 223, 0.14);
+  inset: 36%;
+}
+
+.vinyl-label i {
+  background: var(--ink);
   border-radius: 50%;
-  box-shadow: 0 0 14px rgba(230, 166, 66, 0.72);
   height: 7px;
-  left: 8%;
+  left: 50%;
   position: absolute;
-  top: 17%;
+  top: 50%;
+  transform: translate(-50%, -50%);
   width: 7px;
 }
 
-.waveform {
-  align-items: center;
-  bottom: 11%;
-  display: flex;
-  gap: 4px;
-  height: 20%;
-  left: 7%;
+.radio-card.is-playing .vinyl-record {
+  animation: vinyl-spin 3.2s linear infinite;
+}
+
+.tonearm {
+  height: 76%;
+  pointer-events: none;
   position: absolute;
-  right: 7%;
+  right: 2%;
+  top: 9%;
+  width: 24%;
+  z-index: 4;
 }
 
-.waveform i {
-  animation: radio-wave 1.2s ease-in-out infinite alternate;
-  background: linear-gradient(to top, var(--oxblood), var(--ember));
-  height: 30%;
-  opacity: 0.85;
-  width: 100%;
+.tonearm-pivot,
+.tonearm-bar,
+.tonearm-needle {
+  display: block;
+  position: absolute;
 }
 
-.waveform i:nth-child(3n) { animation-delay: -0.4s; height: 92%; }
-.waveform i:nth-child(4n) { animation-delay: -0.8s; height: 55%; }
-.waveform i:nth-child(5n) { animation-delay: -0.2s; height: 74%; }
+.tonearm-pivot {
+  background: radial-gradient(circle, var(--saffron) 0 20%, #2d2928 21% 58%, #090808 59%);
+  border: 1px solid rgba(243, 234, 223, 0.28);
+  border-radius: 50%;
+  height: 42px;
+  right: 4px;
+  top: 0;
+  width: 42px;
+}
+
+.tonearm-bar {
+  background: linear-gradient(90deg, #2b2625, #d1c1ad 52%, #514944);
+  border-radius: 10px;
+  height: 8px;
+  right: 21px;
+  top: 32px;
+  transform: rotate(68deg);
+  transform-origin: right center;
+  transition: transform 700ms cubic-bezier(.2,.8,.2,1);
+  width: 74%;
+}
+
+.tonearm-needle {
+  background: var(--ember);
+  border-radius: 2px;
+  bottom: 5%;
+  height: 18px;
+  left: 13%;
+  transform: rotate(-14deg);
+  width: 12px;
+}
+
+.radio-card.is-playing .tonearm-bar {
+  transform: rotate(56deg);
+}
 
 .radio-copy {
   align-items: end;
@@ -1107,6 +1239,14 @@ a:focus-visible {
   margin: 0;
 }
 
+.track-meta {
+  color: #8f837a;
+  display: block;
+  font-size: 0.66rem;
+  line-height: 1.4;
+  margin-top: 0.55rem;
+}
+
 .radio-button {
   background: var(--ember);
   color: var(--ink);
@@ -1117,11 +1257,36 @@ a:focus-visible {
   background: var(--saffron);
 }
 
+.radio-button:disabled {
+  cursor: wait;
+  opacity: 0.58;
+  transform: none;
+}
+
 .radio-note {
   color: #82766e;
   font-size: 0.68rem;
   line-height: 1.55;
-  margin: 1rem 0 0;
+  margin: 0;
+}
+
+.radio-footnote {
+  align-items: center;
+  border-top: 1px solid rgba(243, 234, 223, 0.12);
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  margin-top: 1.15rem;
+  padding-top: 1rem;
+}
+
+.radio-footnote a {
+  color: var(--saffron);
+  flex: 0 0 auto;
+  font-size: 0.62rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
 .letterboxd-card {
@@ -1421,6 +1586,10 @@ footer p:last-child {
   to { transform: rotate(360deg); }
 }
 
+@keyframes vinyl-spin {
+  to { transform: rotate(360deg); }
+}
+
 @keyframes breathe {
   0%, 100% { filter: brightness(0.9); transform: scale(0.98); }
   50% { filter: brightness(1.1); transform: scale(1.02); }
@@ -1493,8 +1662,16 @@ footer p:last-child {
   .photo-flip { aspect-ratio: 4 / 5; }
   .flip-controls { align-items: flex-start; flex-direction: column; gap: 1rem; }
   .flip-button { width: 100%; }
+  .vinyl-stage { --record-size: min(55vw, 190px); }
+  .vinyl-sleeve { width: 43%; }
+  .vinyl-sleeve strong { font-size: clamp(1.25rem, 7vw, 1.8rem); }
+  .vinyl-trigger { right: calc(var(--record-size) * 0.48); }
+  .vinyl-stage:hover .vinyl-trigger,
+  .vinyl-stage:focus-within .vinyl-trigger { right: 8px; }
+  .tonearm { right: 0; width: 27%; }
   .radio-copy { align-items: stretch; flex-direction: column; }
   .radio-button { justify-content: center; width: 100%; }
+  .radio-footnote { align-items: flex-start; flex-direction: column; }
   .letterboxd-card { grid-template-columns: 70px 1fr; }
   .letterboxd-mark { height: 70px; width: 70px; }
   .album-card { grid-template-columns: 1fr; }

@@ -1,15 +1,21 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-const tracks = [
-  { title: "Blinding Lights", id: "4NRXx6U8ABQ" },
-  { title: "Save Your Tears", id: "XXYlFuWEuKI" },
-  { title: "Starboy", id: "34Na4j8AVgA" },
-  { title: "The Hills", id: "yzTuBuRdAyA" },
-  { title: "I Feel It Coming", id: "qFLhGq0060w" },
-];
+type AudioTrack = {
+  artistName: string;
+  artworkUrl100: string;
+  collectionName: string;
+  previewUrl: string;
+  trackId: number;
+  trackName: string;
+  trackViewUrl: string;
+};
+
+const WEEKND_CATALOG =
+  "https://itunes.apple.com/search?term=the%20weeknd&media=music&entity=song&attribute=artistTerm&limit=100&country=gb";
+const WEEKND_APPLE_MUSIC = "https://music.apple.com/gb/artist/the-weeknd/479756766";
 
 function Arrow() {
   return <span aria-hidden="true">↗</span>;
@@ -17,18 +23,73 @@ function Arrow() {
 
 export function Hobbies() {
   const [flipped, setFlipped] = useState(false);
-  const [trackIndex, setTrackIndex] = useState<number | null>(null);
+  const [catalog, setCatalog] = useState<AudioTrack[]>([]);
+  const [catalogState, setCatalogState] = useState<"loading" | "ready" | "error">("loading");
+  const [currentTrack, setCurrentTrack] = useState<AudioTrack | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement>(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function loadCatalog() {
+      try {
+        const response = await fetch(WEEKND_CATALOG, { signal: controller.signal });
+        if (!response.ok) throw new Error("Audio catalogue unavailable");
+
+        const data = (await response.json()) as { results?: AudioTrack[] };
+        const seen = new Set<string>();
+        const tracks = (data.results ?? []).filter((track) => {
+          const key = track.trackName?.trim().toLowerCase();
+          const isWeeknd = track.artistName?.toLowerCase().includes("the weeknd");
+          if (!key || !track.previewUrl || !isWeeknd || seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        });
+
+        if (tracks.length === 0) throw new Error("No audio previews returned");
+        setCatalog(tracks);
+        setCatalogState("ready");
+      } catch (error) {
+        if ((error as Error).name !== "AbortError") setCatalogState("error");
+      }
+    }
+
+    void loadCatalog();
+    return () => controller.abort();
+  }, []);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio || !currentTrack) return;
+
+    audio.src = currentTrack.previewUrl.replace("http://", "https://");
+    audio.currentTime = 0;
+    void audio.play().catch(() => setIsPlaying(false));
+  }, [currentTrack]);
 
   function playRandomTrack() {
-    setTrackIndex((current) => {
-      if (tracks.length === 1) return 0;
-      let next = Math.floor(Math.random() * tracks.length);
-      while (next === current) next = Math.floor(Math.random() * tracks.length);
-      return next;
-    });
+    if (catalog.length === 0) return;
+    const choices = currentTrack
+      ? catalog.filter((track) => track.trackId !== currentTrack.trackId)
+      : catalog;
+    const next = choices[Math.floor(Math.random() * choices.length)] ?? catalog[0];
+    setCurrentTrack(next);
   }
 
-  const currentTrack = trackIndex === null ? null : tracks[trackIndex];
+  function togglePlayback() {
+    const audio = audioRef.current;
+    if (!audio || !currentTrack) {
+      playRandomTrack();
+      return;
+    }
+
+    if (audio.paused) {
+      void audio.play().catch(() => setIsPlaying(false));
+    } else {
+      audio.pause();
+    }
+  }
 
   return (
     <section className="hobbies section-shell" id="hobbies" aria-labelledby="hobbies-title">
@@ -93,40 +154,61 @@ export function Hobbies() {
         </article>
 
         <div className="hobby-stack">
-          <article className="radio-card reveal">
+          <article className={`radio-card reveal ${isPlaying ? "is-playing" : ""}`}>
             <div className="radio-topline">
-              <span>Night radio / official videos</span>
-              <span className="on-air"><i /> On air</span>
+              <span>XO vinyl / audio only</span>
+              <span className="on-air"><i /> {isPlaying ? "On air" : "Ready"}</span>
             </div>
-            <div className="radio-display">
-              {currentTrack ? (
-                <iframe
-                  key={currentTrack.id}
-                  src={`https://www.youtube-nocookie.com/embed/${currentTrack.id}?autoplay=1&rel=0&playsinline=1&modestbranding=1`}
-                  title={`The Weeknd - ${currentTrack.title}`}
-                  allow="autoplay; encrypted-media; picture-in-picture"
-                  allowFullScreen
-                />
-              ) : (
-                <div className="radio-idle" aria-hidden="true">
-                  <div className="radio-orbit"><i /></div>
-                  <div className="waveform">
-                    {Array.from({ length: 24 }).map((_, index) => <i key={index} />)}
-                  </div>
-                </div>
-              )}
-            </div>
-            <div className="radio-copy">
-              <div>
-                <p>{currentTrack ? "Now playing" : "Signal waiting"}</p>
-                <h3>{currentTrack?.title ?? "The Weeknd - shuffle"}</h3>
+            <div className="vinyl-stage">
+              <div className="vinyl-sleeve" aria-hidden="true">
+                <span>After-hours archive</span>
+                <strong>XO<br />audio<br />club</strong>
+                <i>UK night press</i>
               </div>
-              <button type="button" className="radio-button" onClick={playRandomTrack}>
-                <span aria-hidden="true">▶</span>
-                {currentTrack ? "Play another" : "Play random"}
+              <button
+                type="button"
+                className="vinyl-trigger"
+                aria-label={currentTrack ? "Play another random The Weeknd song" : "Play a random The Weeknd song"}
+                disabled={catalog.length === 0}
+                onClick={playRandomTrack}
+              >
+                <span className="vinyl-record" aria-hidden="true">
+                  <span className="vinyl-grooves" />
+                  <span className="vinyl-label"><i /></span>
+                </span>
+              </button>
+              <div className="tonearm" aria-hidden="true">
+                <i className="tonearm-pivot" />
+                <i className="tonearm-bar" />
+                <i className="tonearm-needle" />
+              </div>
+            </div>
+            <audio
+              ref={audioRef}
+              preload="none"
+              onEnded={playRandomTrack}
+              onPause={() => setIsPlaying(false)}
+              onPlay={() => setIsPlaying(true)}
+            />
+            <div className="radio-copy">
+              <div aria-live="polite">
+                <p>{currentTrack ? "Now spinning" : catalogState === "error" ? "Signal unavailable" : "Record shelf loading"}</p>
+                <h3>{currentTrack?.trackName ?? "Press the vinyl"}</h3>
+                <span className="track-meta">
+                  {currentTrack?.collectionName ?? (catalogState === "ready" ? `${catalog.length} audio tracks ready` : "Building the audio catalogue")}
+                </span>
+              </div>
+              <button type="button" className="radio-button" disabled={catalog.length === 0} onClick={togglePlayback}>
+                <span aria-hidden="true">{isPlaying ? "Ⅱ" : "▶"}</span>
+                {isPlaying ? "Pause" : currentTrack ? "Resume" : "Play random"}
               </button>
             </div>
-            <p className="radio-note">Playback is served by The Weeknd&apos;s official YouTube uploads.</p>
+            <div className="radio-footnote">
+              <p className="radio-note">Audio previews provided courtesy of iTunes. No video player.</p>
+              <a href={currentTrack?.trackViewUrl ?? WEEKND_APPLE_MUSIC} target="_blank" rel="noreferrer">
+                Listen on Apple Music <Arrow />
+              </a>
+            </div>
           </article>
 
           <a
