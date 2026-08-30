@@ -205,7 +205,6 @@ export default function Home() {
             <div className="signal-orbit orbit-one" aria-hidden="true" />
             <div className="signal-orbit orbit-two" aria-hidden="true" />
             <div className="signal-disc">
-              <p>Night signal 04</p>
               <strong>Code.<br />Cinema.<br />Curiosity.</strong>
               <span>Ideas move after midnight</span>
             </div>

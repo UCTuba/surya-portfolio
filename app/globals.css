@@ -814,8 +814,10 @@ a:focus-visible {
 .photo-flip-inner {
   height: 100%;
   position: relative;
+  -webkit-transform-style: preserve-3d;
   transform-style: preserve-3d;
   transition: transform 820ms cubic-bezier(.18,.8,.2,1);
+  will-change: transform;
   width: 100%;
 }
 
@@ -824,12 +826,17 @@ a:focus-visible {
 }
 
 .photo-face {
+  -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
   border: 1px solid rgba(243, 234, 223, 0.18);
   inset: 0;
   margin: 0;
   overflow: hidden;
   position: absolute;
+}
+
+.photo-front {
+  transform: rotateY(0deg);
 }
 
 .photo-face::after {
@@ -857,6 +864,8 @@ a:focus-visible {
 }
 
 .photo-face figcaption {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
   bottom: clamp(1.4rem, 3vw, 3rem);
   display: flex;
   flex-direction: column;
@@ -865,6 +874,16 @@ a:focus-visible {
   position: absolute;
   right: clamp(1.4rem, 3vw, 3rem);
   z-index: 2;
+}
+
+.photo-face[aria-hidden="true"] figcaption {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.photo-face[aria-hidden="false"] figcaption {
+  opacity: 1;
+  visibility: visible;
 }
 
 .photo-face figcaption span,
