@@ -1145,7 +1145,23 @@ a:focus-visible {
 .vinyl-label {
   background: radial-gradient(circle, #080708 0 8%, var(--saffron) 9% 12%, #8e1324 13% 62%, #3a0911 63%);
   box-shadow: 0 0 0 1px rgba(243, 234, 223, 0.14);
-  inset: 36%;
+  inset: 32%;
+  overflow: hidden;
+}
+
+.vinyl-label.has-artwork {
+  background-position: center;
+  background-size: cover;
+  box-shadow: 0 0 0 2px rgba(230, 166, 66, 0.52), 0 0 18px rgba(0, 0, 0, 0.48);
+}
+
+.vinyl-label::after {
+  background: radial-gradient(circle, transparent 0 8%, rgba(230, 166, 66, 0.8) 9% 12%, transparent 13%);
+  border-radius: inherit;
+  content: "";
+  inset: 0;
+  position: absolute;
+  z-index: 1;
 }
 
 .vinyl-label i {
@@ -1157,6 +1173,7 @@ a:focus-visible {
   top: 50%;
   transform: translate(-50%, -50%);
   width: 7px;
+  z-index: 2;
 }
 
 .radio-card.is-playing .vinyl-record {
@@ -1164,18 +1181,19 @@ a:focus-visible {
 }
 
 .tonearm {
-  height: 76%;
+  height: 100%;
   pointer-events: none;
   position: absolute;
-  right: 2%;
-  top: 9%;
-  width: 24%;
+  right: 0;
+  top: 0;
+  width: 38%;
   z-index: 4;
 }
 
 .tonearm-pivot,
+.tonearm-assembly,
 .tonearm-bar,
-.tonearm-needle {
+.tonearm-cartridge {
   display: block;
   position: absolute;
 }
@@ -1185,35 +1203,55 @@ a:focus-visible {
   border: 1px solid rgba(243, 234, 223, 0.28);
   border-radius: 50%;
   height: 42px;
-  right: 4px;
-  top: 0;
+  right: 18px;
+  top: 18px;
   width: 42px;
+  z-index: 2;
+}
+
+.tonearm-assembly {
+  height: 8px;
+  right: 39px;
+  top: 38px;
+  transform: rotate(-64deg);
+  transform-origin: right center;
+  transition: transform 700ms cubic-bezier(.2,.8,.2,1);
+  width: 82%;
 }
 
 .tonearm-bar {
   background: linear-gradient(90deg, #2b2625, #d1c1ad 52%, #514944);
+  border: 1px solid rgba(243, 234, 223, 0.18);
   border-radius: 10px;
-  height: 8px;
-  right: 21px;
-  top: 32px;
-  transform: rotate(68deg);
-  transform-origin: right center;
-  transition: transform 700ms cubic-bezier(.2,.8,.2,1);
-  width: 74%;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.45);
+  inset: 0;
 }
 
-.tonearm-needle {
+.tonearm-cartridge {
   background: var(--ember);
+  border: 1px solid #ff8a78;
   border-radius: 2px;
-  bottom: 5%;
-  height: 18px;
-  left: 13%;
-  transform: rotate(-14deg);
-  width: 12px;
+  height: 17px;
+  left: -12px;
+  top: -5px;
+  transform: rotate(-10deg);
+  width: 22px;
 }
 
-.radio-card.is-playing .tonearm-bar {
-  transform: rotate(56deg);
+.tonearm-cartridge::after {
+  background: var(--saffron);
+  bottom: -8px;
+  content: "";
+  height: 9px;
+  left: 5px;
+  position: absolute;
+  transform: rotate(18deg);
+  transform-origin: top;
+  width: 2px;
+}
+
+.radio-card.is-playing .tonearm-assembly {
+  transform: rotate(-52deg);
 }
 
 .radio-copy {
@@ -1668,7 +1706,7 @@ footer p:last-child {
   .vinyl-trigger { right: calc(var(--record-size) * 0.48); }
   .vinyl-stage:hover .vinyl-trigger,
   .vinyl-stage:focus-within .vinyl-trigger { right: 8px; }
-  .tonearm { right: 0; width: 27%; }
+  .tonearm { right: 0; width: 42%; }
   .radio-copy { align-items: stretch; flex-direction: column; }
   .radio-button { justify-content: center; width: 100%; }
   .radio-footnote { align-items: flex-start; flex-direction: column; }

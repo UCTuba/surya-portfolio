@@ -91,6 +91,10 @@ export function Hobbies() {
     }
   }
 
+  const currentArtwork = currentTrack?.artworkUrl100
+    ? currentTrack.artworkUrl100.replace("100x100bb", "600x600bb")
+    : null;
+
   return (
     <section className="hobbies section-shell" id="hobbies" aria-labelledby="hobbies-title">
       <div className="section-heading hobbies-heading reveal">
@@ -174,13 +178,20 @@ export function Hobbies() {
               >
                 <span className="vinyl-record" aria-hidden="true">
                   <span className="vinyl-grooves" />
-                  <span className="vinyl-label"><i /></span>
+                  <span
+                    className={`vinyl-label ${currentArtwork ? "has-artwork" : ""}`}
+                    style={currentArtwork ? { backgroundImage: `url("${currentArtwork}")` } : undefined}
+                  >
+                    <i />
+                  </span>
                 </span>
               </button>
               <div className="tonearm" aria-hidden="true">
                 <i className="tonearm-pivot" />
-                <i className="tonearm-bar" />
-                <i className="tonearm-needle" />
+                <span className="tonearm-assembly">
+                  <i className="tonearm-bar" />
+                  <i className="tonearm-cartridge" />
+                </span>
               </div>
             </div>
             <audio
