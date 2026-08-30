@@ -1046,6 +1046,31 @@ a:focus-visible {
   width: 170px;
 }
 
+.vinyl-sleeve.has-artwork {
+  background-position: center;
+  background-size: cover;
+}
+
+.vinyl-sleeve.has-artwork::after {
+  opacity: 0;
+}
+
+.vinyl-sleeve.has-artwork > * {
+  position: relative;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.92);
+  z-index: 2;
+}
+
+.vinyl-sleeve.has-artwork strong {
+  display: -webkit-box;
+  font-size: clamp(1.15rem, 2.5vw, 2rem);
+  line-height: 0.92;
+  max-width: 94%;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
 .vinyl-sleeve span,
 .vinyl-sleeve i {
   color: var(--saffron);
