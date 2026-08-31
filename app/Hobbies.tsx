@@ -167,24 +167,10 @@ export function Hobbies() {
               <div
                 className={`vinyl-sleeve ${currentArtwork ? "has-artwork" : ""}`}
                 style={currentArtwork ? {
-                  backgroundImage: `linear-gradient(to top, rgba(5, 4, 5, 0.92), rgba(5, 4, 5, 0.08) 68%), url("${currentArtwork}")`,
+                  backgroundImage: `url("${currentArtwork}")`,
                 } : undefined}
                 aria-hidden="true"
-              >
-                {currentTrack && currentArtwork ? (
-                  <>
-                    <span>Now sleeved</span>
-                    <strong>{currentTrack.collectionName}</strong>
-                    <i>{currentTrack.artistName}</i>
-                  </>
-                ) : (
-                  <>
-                    <span>After-hours archive</span>
-                    <strong>XO<br />audio<br />club</strong>
-                    <i>UK night press</i>
-                  </>
-                )}
-              </div>
+              />
               <button
                 type="button"
                 className="vinyl-trigger"
